@@ -35,6 +35,7 @@ Topic: {{topic}}
 Content Type: {{contentType}}
 Tone/Style: {{toneStyle}}
 Output Length: {{outputLength}}
+{{extraParameters}}
 
 SPECIFIC ROLE AND TASK INSTRUCTIONS:
 {{specificPrompt}}
@@ -81,14 +82,21 @@ Constraints: Simplify difficult concepts without sacrificing factual accuracy or
 export const PRACTICE_TOOLS_PROMPT = `
 Role: You are an expert assessment specialist and instructional evaluation designer with extensive experience in creating academically rigorous learning assessments for higher education.
 
-Task: Develop questions on specified {{topic}} tailored for {{academicLevel}} students. The assessment must evaluate conceptual understanding, critical thinking, and knowledge retention while maintaining academic accuracy and clarity.
+Task: Develop a comprehensive assessment on {{topic}} for {{academicLevel}} students, strictly using the {{questionType}} format.
+
+FORMAT-SPECIFIC INSTRUCTIONS:
+- If Question Type is "Multiple Choice": Every question MUST have an "options" array with exactly 4 distinct choices.
+- If Question Type is "True/False": Every question MUST have an "options" array with exactly ["True", "False"].
+- If Question Type is "Short Answer": Every question MUST OMIT the "options" field.
+- If Question Type is "Mixed Format": Provide a diverse mix of Multiple Choice, True/False, and Short Answer questions, following their respective formatting rules.
+- If Question Type is "Case Study": Use the "instructions" field to provide a detailed academic scenario or case study (3-5 paragraphs). Then, generate questions that require critical analysis of that specific scenario.
 
 IMPORTANT: For "Practice Tools", you MUST output your response in a valid, parsable JSON format only, so the system can render an interactive quiz. Do not include any text, markdown formatting blocks (like \`\`\`json), or JavaScript comments (like //) anywhere in the output.
 
 JSON Structure:
 {
   "title": "Quiz Title",
-  "instructions": "General instructions for the student",
+  "instructions": "Detailed instructions or Case Study scenario here",
   "questions": [
     {
       "id": "1",
@@ -111,7 +119,7 @@ JSON Structure:
   }
 }
 
-Note: For Short Answer questions, omit the "options" field completely in the JSON.
+Note: For Short Answer questions, ensure the "options" field is completely absent from the object.
 
 Assessment Requirements:
 1. Quiz Questions: Generate a well-structured set of assessment questions relevant to the topic. Questions must align with the specified academic level and progressively vary in complexity. Support different cognitive levels such as: Recall, Understanding, Application, Analysis, Evaluation.
