@@ -37,12 +37,17 @@ export async function generateAcademicContent(params: GenerationParams): Promise
     .replace(/{{specificPrompt}}/g, specificPrompt);
 
   // Replace sub-prompt specific variables
+  let extraParams = "";
   if (params.difficultyLevel) {
     finalPrompt = finalPrompt.replace(/{{difficultyLevel}}/g, params.difficultyLevel);
+    extraParams += `Difficulty Level: ${params.difficultyLevel}\n`;
   }
   if (params.questionType) {
     finalPrompt = finalPrompt.replace(/{{questionType}}/g, params.questionType);
+    extraParams += `Question Format: ${params.questionType}\n`;
   }
+
+  finalPrompt = finalPrompt.replace(/{{extraParameters}}/g, extraParams.trim());
 
   try {
     const response = await ai.models.generateContent({
